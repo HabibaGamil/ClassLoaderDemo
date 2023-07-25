@@ -14,9 +14,8 @@ public class CustomClassLoader extends ClassLoader{
         super(parent);
         //initializing the path through which any new/updates class file will be added (this is the path to the commands folder)
         Path currRelativePath = Paths.get("");
-        classPath = currRelativePath.toAbsolutePath().toString()+ "\\target\\classes\\";
-        classPath+=path;
-        // path+="com\\example\\controller\\commands\\";
+        classPath = currRelativePath.toAbsolutePath().toString()+ "\\target\\classes\\org\\";
+        classPath+=path+"\\";
         System.out.println(path);
     }
     public synchronized Class findClass(String name) throws ClassNotFoundException
@@ -26,14 +25,16 @@ public class CustomClassLoader extends ClassLoader{
             Class c = defineClass( null , bytes, 0, bytes.length );
             return c;
         }
-        throw new ClassNotFoundException();
+        return null;
 
     }
     //This method loads the byte code from the file using the specified path
     public byte [] getClassData(String name){
+        System.out.println("class path: "+ classPath);
 
         try {
             String classFile = classPath + name.replace('.', '/') + ".class";
+            System.out.println(classFile);
             int classSize = Long.valueOf((new File(classFile)).length()).intValue();
             byte[] buf = new byte[classSize];
             FileInputStream fileInput = new FileInputStream(classFile);
@@ -47,7 +48,7 @@ public class CustomClassLoader extends ClassLoader{
     }
     @Override
     public Class loadClass(String name) throws ClassNotFoundException {
-        if(name.equals("MyCommand")) {
+        if(name.equals("Foo")) {
             return this.findClass(name);
         }
         return super.loadClass(name);
